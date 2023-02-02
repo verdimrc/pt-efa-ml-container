@@ -168,7 +168,7 @@ RUN ompi_info --parsable --all | grep mpi_built_with_cuda_support:value \
     pyopenssl \
     libgcc \
     conda-content-trust \
-    charset-normalizer
+    charset-normalizer \
  && /opt/conda/bin/conda install -c pytorch -y magma-cuda117
  # conda pathy installs dataclasses regardless of py version: https://github.com/conda-forge/pathy-feedstock/blob/1e6da43da5c8e11e09c063c79b09236bbacb7780/recipe/meta.yaml#L29
  # pypi solves this issue: https://github.com/justindujardin/pathy/blob/master/requirements.txt#L3
