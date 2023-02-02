@@ -10,6 +10,10 @@
 #
 # Software versions: updated on 20220202.
 ################################################################################
+# Build instruction:
+#
+#     docker build . -t <tag>
+################################################################################
 ARG PYTHON=python3
 ARG PYTHON_VERSION=3.9.16
 ARG PYTHON_SHORT_VERSION=3.9
@@ -134,6 +138,7 @@ RUN cd /tmp \
  && git clone https://github.com/NVIDIA/nccl.git -b v${NCCL_VERSION}-1 \
  && cd nccl \
  && make -j src.build BUILDDIR=/usr/local \
+ # nvcc to target p3, g4, g5, p4 instances
  NVCC_GENCODE="-gencode=arch=compute_86,code=sm_86 -gencode=arch=compute_80,code=sm_80 -gencode=arch=compute_75,code=sm_75 -gencode=arch=compute_70,code=sm_70" \
  && rm -rf /tmp/nccl
 
@@ -144,7 +149,7 @@ RUN mkdir /tmp/efa \
  && tar -xf aws-efa-installer-${EFA_VERSION}.tar.gz \
  && cd aws-efa-installer \
  && apt-get update \
- && ./efa_installer.sh -y --skip-kmod -g \
+ && ./efa_installer.sh -y --skip-kmod -g --skip-limit-conf --no-verify \
  && rm -rf /tmp/efa \
  && rm -rf /tmp/aws-efa-installer-${EFA_VERSION}.tar.gz \
  && rm -rf /var/lib/apt/lists/* \
@@ -209,33 +214,6 @@ RUN pip install --no-cache-dir -U \
 # Removing the cache as it is needed for security verification
 RUN rm -rf /root/.cache | true
 
-########################################################
-#  _____ ____ ____    ___
-# | ____/ ___|___ \  |_ _|_ __ ___   __ _  __ _  ___
-# |  _|| |     __) |  | || '_ ` _ \ / _` |/ _` |/ _ \
-# | |__| |___ / __/   | || | | | | | (_| | (_| |  __/
-# |_____\____|_____| |___|_| |_| |_|\__,_|\__, |\___|
-#                                         |___/
-#  ____           _
-# |  _ \ ___  ___(_)_ __   ___
-# | |_) / _ \/ __| | '_ \ / _ \
-# |  _ <  __/ (__| | |_) |  __/
-# |_| \_\___|\___|_| .__/ \___|
-#                  |_|
-########################################################
-
-FROM common AS ec2
-
-ARG PYTHON
-ARG PYTHON_VERSION
-ARG PYTHON_SHORT_VERSION
-
-# PyTorch Binaries
-ARG PT_EC2_TRAINING_URL
-ARG PT_TORCHVISION_URL
-ARG PT_TORCHAUDIO_URL
-ARG PT_TORCHDATA_URL
-
 # Configure Open MPI and configure NCCL parameters
 RUN mv $OPEN_MPI_PATH/bin/mpirun $OPEN_MPI_PATH/bin/mpirun.real \
  && echo '#!/bin/bash' > $OPEN_MPI_PATH/bin/mpirun \
@@ -293,6 +271,7 @@ RUN pip install --no-cache-dir -U ${PT_EC2_TRAINING_URL} ${PT_TORCHVISION_URL} $
 # Use Amr's way of building apex
 RUN git clone https://github.com/NVIDIA/apex && \
     cd apex && \
+    # nvcc to target p3, g4, g5, p4 instances
     NVCC_GENCODE="-gencode=arch=compute_86,code=sm_86 -gencode=arch=compute_80,code=sm_80 -gencode=arch=compute_75,code=sm_75 -gencode=arch=compute_70,code=sm_70" \
     pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" \
         --global-option="--deprecated_fused_adam" --global-option="--xentropy" \
@@ -300,7 +279,6 @@ RUN git clone https://github.com/NVIDIA/apex && \
 
 WORKDIR /
 
-# Removing the cache as it is needed for security verification
 RUN rm -rf /root/.cache | true
 
 # Starts framework
