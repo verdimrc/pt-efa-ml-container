@@ -290,9 +290,13 @@ RUN mkdir -p /etc/pki/tls/certs && cp /etc/ssl/certs/ca-certificates.crt /etc/pk
 RUN pip install --no-cache-dir -U ${PT_EC2_TRAINING_URL} ${PT_TORCHVISION_URL} ${PT_TORCHAUDIO_URL} ${PT_TORCHDATA_URL} torchnet
 
 # Install Nvidia Apex (needs pytorch)
+# Use Amr's way of building apex
 RUN git clone https://github.com/NVIDIA/apex && \
     cd apex && \
-    pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
+    NVCC_GENCODE="-gencode=arch=compute_86,code=sm_86 -gencode=arch=compute_80,code=sm_80 -gencode=arch=compute_75,code=sm_75 -gencode=arch=compute_70,code=sm_70" \
+    pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" \
+        --global-option="--deprecated_fused_adam" --global-option="--xentropy" \
+        --global-option="--fast_multihead_attn" ./
 
 WORKDIR /
 
