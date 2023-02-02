@@ -277,9 +277,24 @@ RUN git clone https://github.com/NVIDIA/apex && \
     # p3, g4, g5, p4
     TORCH_CUDA_ARCH_LIST="7.0;7.5;8.0;8.6" \
     /usr/bin/time -o /build-time-apex.txt pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" \
-        # Below (from Amr's) causes long compilation time.
-        # --global-option="--deprecated_fused_adam" --global-option="--xentropy" \
+        # Below are Amr's + Nemo-Megatron's flags. Beware that these causes
+        # long compilation time. Use judiciously.
+        #
+        # [20230202] Who uses apex?
+        #
+        # - HF transformers also doesn't use these flags to build apex (see
+        #   their dockerfile) -- HF uses apex for T5 amongst many other things.
+        #
+        # - PyTorch doesn't use apex's amp.
+        #
+        # - PyTorch-Lightning deprecates (removes altogether) apex
+        #
+        # Amr's + Nemo-Megatron's flags:
+        # --global-option="--deprecated_fused_adam" \
+        # --global-option="--xentropy" \
         # --global-option="--fast_multihead_attn" \
+        # --global-option="--fast_layer_norm" \
+        # --global-option="--distributed_adam" \
         ./
 
 WORKDIR /

@@ -2,16 +2,9 @@
 
 Instance: g4dn.8xlarge, us-east-1, EBS gp3 with 3k IOPS and 125 MB/s throughput.
 
-| Variant           | Image build time | Apex build time\* |
-| ----------------- | ---------------- | ----------------- |
-| Apex: Amr's flags | 1h:24m           |                   |
-| Apex: DLC's flags |                  |                   |
+| Variant              | Image build time | Apex build time\* | Image size |
+| -------------------- | ---------------- | ----------------- | ---------- |
+| Apex: standard flags |                  |                   |            |
+| Apex: extra flags    | 1h:24m           |                   | 11.7 GB    |
 
-\*: see `/build-time-apex.txt` inside the container.
-
-Image size:
-
-```console
-$ docker images
-asdf
-```
+\*See `/build-time-apex.txt` inside the container.
