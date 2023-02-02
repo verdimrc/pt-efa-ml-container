@@ -115,6 +115,9 @@ RUN apt-get update \
     vim \
     wget \
     zlib1g-dev \
+# gdrcopy
+check \
+pkg-config \
  && rm -rf /var/lib/apt/lists/* \
  && apt-get clean
 
@@ -131,6 +134,7 @@ RUN cd /tmp \
  && git clone https://github.com/NVIDIA/nccl.git -b v${NCCL_VERSION}-1 \
  && cd nccl \
  && make -j64 src.build BUILDDIR=/usr/local \
+ NVCC_GENCODE="-gencode=arch=compute_86,code=sm_86 -gencode=arch=compute_80,code=sm_80 -gencode=arch=compute_75,code=sm_75 -gencode=arch=compute_70,code=sm_70 -gencode=arch=compute_60,code=sm_60" \
  && rm -rf /tmp/nccl
 
 # Install EFA
