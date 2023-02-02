@@ -271,9 +271,10 @@ RUN pip install --no-cache-dir -U ${PT_EC2_TRAINING_URL} ${PT_TORCHVISION_URL} $
 # Use Amr's way of building apex
 RUN git clone https://github.com/NVIDIA/apex && \
     cd apex && \
-    # nvcc to target p3, g4, g5, p4 instances
-    NVCC_GENCODE="-gencode=arch=compute_86,code=sm_86 -gencode=arch=compute_80,code=sm_80 -gencode=arch=compute_75,code=sm_75 -gencode=arch=compute_70,code=sm_70" \
+    # p3, g4, g5, p4
+    TORCH_CUDA_ARCH_LIST="7.0;7.5;8.0;8.6" \
     pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" \
+        # Below (from Amr's) causes long compilation time.
         --global-option="--deprecated_fused_adam" --global-option="--xentropy" \
         --global-option="--fast_multihead_attn" ./
 
