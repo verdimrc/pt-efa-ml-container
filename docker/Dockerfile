@@ -192,20 +192,19 @@ RUN /opt/conda/bin/conda config --set ssl_verify False \
 
 WORKDIR /root
 
+# Remove versions lock
 RUN pip install --no-cache-dir -U \
-    "awscli>1.27,<2" \
+    "awscli" \
     boto3 \
-    "click==8.1.2,<9" \
-    "cmake>=3.24.3,<3.25" \
+    "click" \
+    "cmake" \
     cryptography \
-    "ipython>=8.6.0,<8.7" \
-    "mpi4py>=3.1.4,<3.2" \
-    "opencv-python>=4.6.0,<4.7" \
+    "ipython" \
+    "mpi4py" \
     packaging \
     Pillow \
-    "psutil>=5.9.4,<5.10" \
-    "pyyaml>=5.4,<5.5" \
-    "scipy>=1.9.3,<2"
+    "psutil" \
+    "pyyaml"
 
 # Removing the cache as it is needed for security verification
 RUN rm -rf /root/.cache | true
