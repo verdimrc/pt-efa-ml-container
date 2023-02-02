@@ -64,8 +64,10 @@ ENV PYTHONIOENCODING=UTF-8
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 ENV PATH /opt/conda/bin:$PATH
-ENV TORCH_CUDA_ARCH_LIST="3.7 5.0 7.0+PTX 8.0"
-ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
+
+# This can be queried at runtime from pytorch.
+#ENV TORCH_CUDA_ARCH_LIST="3.7 5.0 7.0+PTX 8.0"
+#ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
 
 ENV CUDNN_VERSION=8.5.0.96
 ENV NCCL_VERSION=2.16.2
