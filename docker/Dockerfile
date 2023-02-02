@@ -236,15 +236,6 @@ ARG PT_TORCHVISION_URL
 ARG PT_TORCHAUDIO_URL
 ARG PT_TORCHDATA_URL
 
-# Install AWS-PyTorch and other torch packages
-RUN pip uninstall -y torch torchvision torchaudio torchdata \
- && pip install --no-cache-dir -U ${PT_EC2_TRAINING_URL} ${PT_TORCHVISION_URL} ${PT_TORCHAUDIO_URL} ${PT_TORCHDATA_URL} torchnet
-
-# Install Nvidia Apex (needs pytorch)
-RUN git clone https://github.com/NVIDIA/apex && \
-    cd apex && \
-    pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
-
 # Configure Open MPI and configure NCCL parameters
 RUN mv $OPEN_MPI_PATH/bin/mpirun $OPEN_MPI_PATH/bin/mpirun.real \
  && echo '#!/bin/bash' > $OPEN_MPI_PATH/bin/mpirun \
@@ -294,6 +285,14 @@ RUN rm -rf /root/.ssh/ && \
  && printf "Host *\n StrictHostKeyChecking no\n" >> /root/.ssh/config
 
 RUN mkdir -p /etc/pki/tls/certs && cp /etc/ssl/certs/ca-certificates.crt /etc/pki/tls/certs/ca-bundle.crt
+
+# Install AWS-PyTorch and other torch packages
+RUN pip install --no-cache-dir -U ${PT_EC2_TRAINING_URL} ${PT_TORCHVISION_URL} ${PT_TORCHAUDIO_URL} ${PT_TORCHDATA_URL} torchnet
+
+# Install Nvidia Apex (needs pytorch)
+RUN git clone https://github.com/NVIDIA/apex && \
+    cd apex && \
+    pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
 
 WORKDIR /
 
