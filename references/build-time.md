@@ -10,7 +10,10 @@ Instance: g4dn.8xlarge, us-east-1, EBS gp3 with 10k IOPS and 1k MB/s throughput.
 | pt-apex:opt | 42m\* / 1h:24m\*\*   | 42m              | 11.8 GB    |
 
 +See `/build-time-apex.txt` inside the container.
-\*Docker images already has `pt-apex:std`.
+
+\*Docker images already has `pt-apex:std`. Hence, estimated build time is
+*time(std) + time(apex:opt) - time(apex:std) = ~1h*.
+
 \*\*With EBS 3k IOPS and 125 MB/s throughput, all layers built.
 
 NCCL compilation takes 5.5m (see `/build-time-nccl.txt` inside the container)
