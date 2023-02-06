@@ -31,6 +31,8 @@ FROM nvidia/cuda:11.7.1-base-ubuntu20.04 AS base_image
 ENV DEBIAN_FRONTEND=noninteractive \
     LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib"
 
+ENV TERM=xterm-mono
+
 RUN apt-get update \
  && apt-get upgrade -y \
  && apt-get autoremove -y \
@@ -302,4 +304,5 @@ WORKDIR /
 RUN rm -rf /root/.cache | true
 
 # Starts framework
+ENV TERM=xterm
 CMD ["/bin/bash"]
