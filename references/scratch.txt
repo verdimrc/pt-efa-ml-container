@@ -1,0 +1,37 @@
+# Based image is docker/haha:hhe
+
+export TORCH_CUDA_ARCH_LIST="7.0;7.5;8.0;8.6"
+export TORCH_CUDA_ARCH_LIST="7.0;7.5;8.0;8.6+PTX"
+cd /
+git clone --recurse-submodules -j8 https://github.com/pytorch/pytorch --branch v1.13.1 --single-branch
+cd pytorch
+
+#export USE_CUDA=1 USE_CUDNN=1 USE_MKLDNN=1
+#export USE_CUDA=1 USE_CUDNN=1 USE_COLORIZE_OUTPUT=0
+export USE_COLORIZE_OUTPUT=0
+export USE_SYSTEM_NCCL=1
+
+# https://github.com/pytorch/pytorch#install-dependencies
+conda install -y astunparse numpy ninja pyyaml setuptools cmake cffi typing_extensions future six requests dataclasses
+
+# https://github.com/pytorch/pytorch#install-pytorch
+# This seems to be automatically done?
+#export CMAKE_PREFIX_PATH=${CONDA_PREFIX:-"$(dirname $(which conda))/../"}
+
+/usr/bin/time python setup.py develop
+# g4dn.8xlarge, EBS 10k IOPS and 1000 MB/s throughput.
+# Finished processing dependencies for torch==1.13.0a0+git49444c3
+# 60758.33user 2420.77system 51:42.55elapsed 2036%CPU (0avgtext+0avgdata 2787524maxresident)k
+# 0inputs+49763072outputs (410major+640019005minor)pagefaults 0swaps
+
+/usr/bin/time python setup.py bdist_wheel
+# 230.28user 27.20system 1:53.50elapsed 226%CPU (0avgtext+0avgdata 1299784maxresident)k
+# 0inputs+7900416outputs (8major+5170199minor)pagefaults 0swaps
+
+# This is meant as inline comments, but still make copy-paste this whole-file works on bash shell.
+echo "
+ls -al dist/torch-1.13.0*-cp39-cp39-linux_x86_64.whl
+
+root@3d479b551585:/pytorch# ls -alh ./dist/torch-1.13.0a0+git49444c3-cp39-cp39-linux_x86_64.whl
+-rw-r--r-- 1 root root 370M Feb  9 06:56 ./dist/torch-1.13.0a0+git49444c3-cp39-cp39-linux_x86_64.whl
+"
